@@ -15,7 +15,7 @@
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "c1b6481e-8c15-4738-9696-53841b59673d",
+        "path": "YOUR_WEBHOOK_PATH",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
@@ -26,7 +26,7 @@
       ],
       "id": "96950114-ccd4-4502-b606-125254534b1b",
       "name": "Webhook",
-      "webhookId": "c1b6481e-8c15-4738-9696-53841b59673d"
+      "webhookId": "YOUR_WEBHOOK_PATH"
     },
     {
       "parameters": {
@@ -54,7 +54,7 @@
     {
       "parameters": {
         "operation": "upload",
-        "bucketName": "aadam-ocr-pipeline-20261",
+        "bucketName": "YOUR_S3_BUCKET_NAME",
         "fileName": "={{$binary.file.fileName}}",
         "binaryPropertyName": "file",
         "additionalFields": {}
@@ -69,8 +69,8 @@
       "name": "Upload a file",
       "credentials": {
         "aws": {
-          "id": "Sl6EKYRdBrcMt3ZK",
-          "name": "AWS (IAM) account 2"
+          "id": "YOUR_AWS_CREDENTIAL_ID",
+          "name": "YOUR_AWS_CREDENTIAL_NAME"
         }
       }
     },
@@ -90,7 +90,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://ftooudgweksjgvkkpgdf.supabase.co/rest/v1/documents",
+        "url": "YOUR_SUPABASE_URL/rest/v1/documents",
         "sendHeaders": true,
         "specifyHeaders": "json",
         "jsonHeaders": "{\n  \"apikey\": \"YOUR_SUPABASE_ANON_KEY\",\n  \"Content-Type\": \"application/json\",\n  \"Prefer\": \"return=representation\"\n}",
@@ -278,10 +278,10 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "b9df93df-1ad7-46fb-96a3-fab3fff8a1c2",
+  "versionId": "YOUR_WORKFLOW_VERSION_ID",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "6f28a6edc5c8ad0ff4485e1d023fe717b60c6187be943b91d59ba9521b0dea9e"
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
   },
   "id": "BdgHSbneHE9aPGJm",
   "tags": []
