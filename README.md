@@ -24,6 +24,14 @@ This system automates document ingestion, transforms text into vector embeddings
 
 ## Architecture
 
+This project is built as two connected n8n workflows:
+### 1. Ingestion Workflow
+Document Upload → OCR → Text Cleaning → Chunking → Embeddings Generation → Store Original File in AWS S3 → Store Text Chunks and Embeddings in Supabase
+
+### 2. Query Workflow
+User Question → Question Embedding → Vector Search in Supabase → Retrieve Relevant Chunks → LLM Response Generation
+Together, these workflows form a Retrieval-Augmented Generation (RAG) system for intelligent document querying.
+
 ### Ingestion Pipeline
 1. Document text is processed and chunked
 2. Chunks are converted into embeddings using Google Generative AI
