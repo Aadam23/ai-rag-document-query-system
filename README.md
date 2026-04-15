@@ -1,8 +1,8 @@
 # ai-rag-document-query-system
 
-An AI-powered document query system built with Retrieval-Augmented Generation (RAG), vector embeddings, and semantic search.
+Built an end-to-end AI-powered document processing system that extracts, analyzes, and retrieves insights from unstructured documents using OCR, embeddings, and Retrieval-Augmented Generation (RAG).
 
-This project ingests document content, converts it into embeddings, stores it in a vector database, retrieves the most relevant context for a user query, and uses a large language model to generate grounded answers.
+This system automates document ingestion, transforms text into vector embeddings, and enables intelligent querying using semantic search.
 
 ## Features
 
