@@ -1,21 +1,8 @@
-create or replace function match_documents (
-  query_embedding text,
-  match_count int default 5
-)
-returns table (
-  id bigint,
+create extension if not exists vector;
+
+create table if not exists documents (
+  id bigserial primary key,
   content text,
   metadata jsonb,
-  similarity float
-)
-language sql
-as $$
-  select
-    documents.id,
-    documents.content,
-    documents.metadata,
-    1 - (documents.embedding <=> query_embedding::vector) as similarity
-  from documents
-  order by documents.embedding <=> query_embedding::vector
-  limit match_count;
-$$;
+  embedding vector(1536)
+);
