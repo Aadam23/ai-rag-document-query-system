@@ -1,0 +1,247 @@
+{
+  "name": "RAG Query Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "YOUR_WEBHOOK_PATH",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0b60a333-2c8c-4962-bc9d-e7b6638123d3",
+      "name": "Webhook",
+      "webhookId": "YOUR_WEBHOOK_PATH"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "67571d2b-b539-4e1c-bdef-a948e435b14c",
+              "name": "question",
+              "value": "=={{$json.body.question}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "91f4ffd5-1591-4125-a94f-d4edeebe098a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "YOUR_GOOGLE_API_KEY"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\"\n}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"models/gemini-embedding-001\",\n  \"content\": {\n    \"parts\": [\n      {\n        \"text\": {{ JSON.stringify($json.question) }}\n      }\n    ]\n  },\n  \"output_dimensionality\": 1536\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "235d9ecb-3953-4fb8-bcf4-e2ca2d73d6d0",
+      "name": "Google API HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "YOUR_SUPABASE_URL/rest/v1/rpc/match_documents",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"apikey\": \"YOUR_SUPABASE_ANON_KEY\",\n  \"Content-Type\": \"application/json\"\n}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query_embedding",
+              "value": "={{ '[' + $json.embedding.values.join(',') + ']' }}"
+            },
+            {
+              "name": "match_count",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "a1b67d15-1840-4c31-80b9-561be42ab5ad",
+      "name": "Supabase HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = $input.all();\n\nconst context = results\n  .map((item, i) => {\n    const content = item.json.content || \"\";\n    const similarity = item.json.similarity || 0;\n    return `Result ${i + 1} (similarity: ${similarity}):\\n${content}`;\n  })\n  .join(\"\\n\\n---\\n\\n\");\n\nreturn [\n  {\n    json: {\n      context\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        0
+      ],
+      "id": "99579494-a2fa-4ab0-849c-ab18b38bf383",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "YOUR_GOOGLE_API_KEY"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\"\n}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "contents[0].parts[0].text",
+              "value": "={{\"Answer the user's question using only the context below.\\n\\nContext:\\n\" + $json.context + \"\\n\\nQuestion:\\n\" + $node[\"Edit Fields\"].json[\"question\"] + \"\\n\\nIf the answer is not in the context, say that clearly.\"}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "26dcabf8-366a-43b1-a4aa-658f43341bc0",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const answer = $json.candidates?.[0]?.content?.parts?.[0]?.text || \"No answer found\";\n\nreturn [\n  {\n    json: {\n      answer\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "a68f24b1-67b2-4adb-bdef-3daf5f50049d",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google API HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google API HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Supabase HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "YOUR_WORKFLOW_VERSION_ID",
+  "meta": {
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "id": "Hu3L2KN3ykkHibzJ",
+  "tags": []
+}
