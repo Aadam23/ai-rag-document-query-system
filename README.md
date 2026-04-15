@@ -52,19 +52,14 @@ What cloud skills does this document mention?
 **Answer:**  
 The document mentions experience with Azure, AWS, Kubernetes, CI/CD, and Infrastructure as Code using Terraform.
 
-## Project Structure
+## Screenshots
 
-```text
-rag-document-query-system/
-│
-├── README.md
-├── architecture-diagram.png
-├── n8n/
-│   ├── ingestion-workflow.json
-│   └── query-workflow.json
-├── supabase/
-│   ├── schema.sql
-│   └── match_documents.sql
-└── examples/
-    ├── sample-query.json
-    └── sample-response.json
+1. Ingestion Workflow
+<img width="1440" height="787" alt="Screenshot 2026-04-13 at 1 10 52 PM" src="https://github.com/user-attachments/assets/e045afff-200c-4239-8260-bc46269c852e" />
+
+2. Query Pipeline
+<img width="1440" height="900" alt="Screenshot 2026-04-14 at 11 28 09 PM" src="https://github.com/user-attachments/assets/6d0809ca-7024-42eb-a0c2-f8a3e1ff65f2" />
+
+3. S3 Bucket
+<img width="1440" height="900" alt="Screenshot 2026-04-14 at 11 28 33 PM" src="https://github.com/user-attachments/assets/9267771b-0c12-4f47-9dfd-1d601e4b213f" />
+
