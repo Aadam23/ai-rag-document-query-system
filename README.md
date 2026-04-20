@@ -1,4 +1,4 @@
-# ai-rag-document-query-system
+# AI-RAG-Document-Query-System
 
 Built an end-to-end AI-powered document processing system that extracts, analyzes, and retrieves insights from unstructured documents using OCR, embeddings, and Retrieval-Augmented Generation (RAG).
 
